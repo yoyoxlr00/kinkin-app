@@ -127,3 +127,5 @@ Google Nearby Search คืนผลสูงสุด 20 ร้านต่อ�
 ## หลัง clone จาก Git
 ไฟล์ web/index.html ที่มี API key ถูกเก็บไว้เฉพาะเครื่อง ให้คัดลอก web/index.html.example เป็น web/index.html แล้วแทน YOUR_WEB_MAPS_API_KEY ด้วย key สำหรับเว็บของคุณ ส่วน server/.env ให้คัดลอกจาก server/.env.example และใส่ server key เอง
 
+
+Repository: https://github.com/yoyoxlr00/kinkin-app
