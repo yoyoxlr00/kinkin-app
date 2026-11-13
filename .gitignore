@@ -1,0 +1,23 @@
+.dart_tool/
+.flutter-plugins*
+build/
+.env
+*.local.json
+android/local.properties
+android/key.properties
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+# Local editor and credentials
+.idea/
+*.iml
+web/index.html
+server/diagnose-photos.mjs
+*.log
+node_modules/
+android/.gradle/
+android/captures/
+ios/Flutter/ephemeral/
+

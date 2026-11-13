@@ -1,0 +1,20 @@
+name: kinkin
+description: Find your next meal with cuisine filters, maps and a little luck.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: '>=3.32.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  google_maps_flutter: ^2.12.0
+  geolocator: ^13.0.2
+  http: ^1.3.0
+  url_launcher: ^6.3.1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+flutter:
+  uses-material-design: true

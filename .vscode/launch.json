@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "kinkin - Chrome (ร้านจริง)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}",
+      "deviceId": "chrome",
+      "flutterMode": "debug",
+      "toolArgs": [
+        "--web-port=3000",
+        "--dart-define=DEMO_MODE=false",
+        "--dart-define=MAPS_ENABLED=true",
+        "--dart-define=API_BASE_URL=http://localhost:8080"
+      ]
+    }
+  ]
+}
