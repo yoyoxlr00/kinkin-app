@@ -7,6 +7,7 @@ import 'models.dart';
 import 'restaurant_service.dart';
 import 'location_picker.dart';
 import 'restaurant_photo.dart';
+import 'restaurant_details.dart';
 
 const orange = Color(0xFFEC693E);
 void main() => runApp(const KinkinApp());
@@ -48,6 +49,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   double lat = 13.7465, lng = 100.5345, radius = 3, rating = 0;
   bool openOnly = false, loading = true, locating = false;
   String? error, previousId;
+  String? budget;
   String query = '';
   String locationName = 'สยาม กรุงเทพฯ';
   int tab = 0, requestId = 0;
@@ -58,7 +60,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
           lng: lng,
           radiusKm: radius,
           openOnly: openOnly,
-          minimumRating: rating)
+          minimumRating: rating, priceLevel: budget)
       .where((r) => r.name.toLowerCase().contains(query.toLowerCase()))
       .toList();
 
@@ -254,7 +256,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(22),
             side: const BorderSide(color: Color(0xFFF0E8DE))),
-        child: Padding(
+        child: InkWell(onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (_) => RestaurantDetailsPage(restaurant: r, onDirections: directions))),
+          borderRadius: BorderRadius.circular(22), child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(children: [
               RestaurantPhoto(restaurant: r, emoji: cuisine?.emoji ?? '🍽️'),
@@ -266,6 +270,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     Text(r.name,
                         style: const TextStyle(
                             fontSize: 17, fontWeight: FontWeight.w700)),
+                    Text(r.priceLabel, style: const TextStyle(color: Colors.brown, fontSize: 12)),
                     Text(r.address,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -291,7 +296,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   tooltip: 'เส้นทางไปร้าน',
                   onPressed: () => directions(r),
                   icon: const Icon(Icons.north_east, color: orange)),
-            ])));
+            ]))));
   }
 
   Widget filters() =>
@@ -356,6 +361,17 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   selected: rating > 0,
                   onSelected: (v) => setState(() => rating = v ? 4.5 : 0)),
             ]),
+        const SizedBox(height: 12),
+        const Text('งบประมาณ', style: TextStyle(fontWeight: FontWeight.bold)),
+        Wrap(spacing: 8, runSpacing: 4, children: [
+          ChoiceChip(label: const Text('ทุกงบ'), selected: budget == null,
+            onSelected: (_) => setState(() => budget = null)),
+          for (final entry in priceLabels.entries) ChoiceChip(label: Text(entry.value), selected: budget == entry.key,
+            onSelected: (_) => setState(() => budget = budget == entry.key ? null : entry.key)),
+          ChoiceChip(label: const Text('ไม่ทราบราคา'), selected: budget == 'unknown',
+            onSelected: (_) => setState(() => budget = budget == 'unknown' ? null : 'unknown')),
+        ]),
+        const Text('ระดับราคาจาก Google • ไม่ใช่ราคาต่อคน', style: TextStyle(fontSize: 12, color: Colors.black54)),
         const SizedBox(height: 20),
       ]);
 

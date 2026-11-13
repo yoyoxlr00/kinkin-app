@@ -25,7 +25,14 @@ class Restaurant {
       this.rating,
       this.open,
       this.photo,
+      this.priceLevel,
+      this.phone,
+      this.website,
+      this.hours = const [],
       this.mapsUrl});
+  final String? priceLevel, phone, website;
+  final List<String> hours;
+  String get priceLabel => priceLabels[priceLevel] ?? 'ไม่ทราบราคา';
   final PlacePhoto? photo;
   final String id, name, address;
   final double lat, lng;
@@ -44,6 +51,11 @@ class Restaurant {
         rating: (json['rating'] as num?)?.toDouble(),
         open: json['currentOpeningHours']?['openNow'] as bool?,
         mapsUrl: json['googleMapsUri'] as String?,
+        priceLevel: json['priceLevel'] as String?,
+        phone: json['nationalPhoneNumber'] as String?,
+        website: json['websiteUri'] as String?,
+        hours: List<String>.from(
+            json['regularOpeningHours']?['weekdayDescriptions'] ?? []),
         photo: (json['photos'] as List?)?.isNotEmpty == true
             ? PlacePhoto.fromJson(json['photos'][0] as Map<String, dynamic>)
             : null,
@@ -88,9 +100,14 @@ List<Restaurant> filterRestaurants(
   required double radiusKm,
   required bool openOnly,
   required double minimumRating,
+  String? priceLevel,
 }) =>
     restaurants
         .where((r) =>
+            (priceLevel == null ||
+                (priceLevel == 'unknown'
+                    ? !priceLabels.containsKey(r.priceLevel)
+                    : r.priceLevel == priceLevel)) &&
             (cuisines.isEmpty ||
                 cuisines.any((c) => r.types.contains(c.placeType))) &&
             (!openOnly || r.open == true) &&
@@ -109,3 +126,11 @@ Restaurant? pickRestaurant(List<Restaurant> candidates, Random random,
       : candidates;
   return pool[random.nextInt(pool.length)];
 }
+
+const priceLabels = <String, String>{
+  'PRICE_LEVEL_FREE': 'ไม่มีค่าใช้จ่าย',
+  'PRICE_LEVEL_INEXPENSIVE': '฿ ประหยัด',
+  'PRICE_LEVEL_MODERATE': '฿฿ ปานกลาง',
+  'PRICE_LEVEL_EXPENSIVE': '฿฿฿ ราคาสูง',
+  'PRICE_LEVEL_VERY_EXPENSIVE': '฿฿฿฿ พรีเมียม',
+};

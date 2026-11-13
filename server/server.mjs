@@ -34,6 +34,20 @@ export function createServer({ apiKey,
     if (req.method !== 'GET') return send(405, { error: 'Method not allowed' });
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname === '/health') return send(200, { status: 'ok' });
+    if (url.pathname === '/restaurant') {
+      const id = url.searchParams.get('id') || '';
+      if (!/^[A-Za-z0-9_-]{1,256}$/.test(id)) return send(400, { error: 'Invalid place id' });
+      if (!apiKey) return send(503, { error: 'Places API key is not configured' });
+      try {
+        const detail = await fetchImpl(`https://places.googleapis.com/v1/places/${id}?languageCode=th`, {
+          headers: { 'X-Goog-Api-Key': apiKey,
+            'X-Goog-FieldMask': 'id,displayName,formattedAddress,location,types,rating,currentOpeningHours,regularOpeningHours,nationalPhoneNumber,websiteUri,priceLevel,googleMapsUri,photos' },
+          signal: AbortSignal.timeout(12000),
+        });
+        if (!detail.ok) return send(detail.status === 404 ? 404 : 502, { error: 'Details unavailable' });
+        return send(200, await detail.json());
+      } catch { return send(502, { error: 'Details unavailable' }); }
+    }
     if (url.pathname === '/photo') {
       const name = url.searchParams.get('name') || '';
       if (name.length > 4096 || !/^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/.test(name)) {
@@ -77,7 +91,7 @@ export function createServer({ apiKey,
       const upstream = await fetchImpl(`https://places.googleapis.com/v1/places:${isLocation ? 'searchText' : 'searchNearby'}`, {
         method: 'POST', signal: AbortSignal.timeout(12000),
         headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': apiKey,
-          'X-Goog-FieldMask': isLocation ? 'places.id,places.displayName,places.formattedAddress,places.location' : 'places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.currentOpeningHours,places.googleMapsUri,places.photos' },
+          'X-Goog-FieldMask': isLocation ? 'places.id,places.displayName,places.formattedAddress,places.location' : 'places.id,places.displayName,places.formattedAddress,places.location,places.types,places.rating,places.currentOpeningHours,places.googleMapsUri,places.photos,places.priceLevel' },
         body: JSON.stringify(body),
       });
       if (!upstream.ok) return send(502, { error: 'Places service unavailable' });

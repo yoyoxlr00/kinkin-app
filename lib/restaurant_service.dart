@@ -7,6 +7,19 @@ const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 const mapsEnabled = bool.fromEnvironment('MAPS_ENABLED', defaultValue: false);
 
 class RestaurantService {
+  Future<Restaurant> details(Restaurant restaurant) async {
+    if (demoMode) return restaurant;
+    if (apiBaseUrl.isEmpty)
+      throw Exception('ยังไม่ได้เชื่อมต่อบริการร้านอาหาร');
+    final response = await http
+        .get(Uri.parse('$apiBaseUrl/restaurant')
+            .replace(queryParameters: {'id': restaurant.id}))
+        .timeout(const Duration(seconds: 20));
+    if (response.statusCode != 200) throw Exception('โหลดรายละเอียดไม่สำเร็จ');
+    return Restaurant.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>);
+  }
+
   Future<List<Restaurant>> search(
       double lat, double lng, double radiusKm, Set<Cuisine> cuisines) async {
     if (demoMode) return demoRestaurants;
@@ -115,5 +128,13 @@ final demoRestaurants = <Restaurant>[
         lng: entry.$5,
         types: [entry.$3.placeType],
         rating: entry.$6,
+        priceLevel: entry.$3 == Cuisine.cafe
+            ? null
+            : entry.$3 == Cuisine.italian
+                ? 'PRICE_LEVEL_EXPENSIVE'
+                : entry.$3 == Cuisine.thai
+                    ? 'PRICE_LEVEL_INEXPENSIVE'
+                    : 'PRICE_LEVEL_MODERATE',
+        hours: const ['จันทร์–อาทิตย์: 10:00–21:00 (ข้อมูลสมมติ)'],
         open: entry.$7),
 ];
