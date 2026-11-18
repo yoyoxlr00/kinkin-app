@@ -41,6 +41,31 @@ class Restaurant {
   final bool? open;
   final String? mapsUrl;
 
+  bool get isPartner => id.hashCode.abs() % 4 == 0;
+  String? get partnerPromo =>
+      isPartner ? '🎁 ดีลพิเศษ: ลด 10% เมื่อโชว์หน้าแอป kinkin' : null;
+
+  // แปลง Object เป็น Map เพื่อบันทึกลง Storage
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'displayName': {'text': name},
+        'formattedAddress': address,
+        'location': {'latitude': lat, 'longitude': lng},
+        'types': types,
+        'rating': rating,
+        'currentOpeningHours': open != null ? {'openNow': open} : null,
+        'googleMapsUri': mapsUrl,
+        'priceLevel': priceLevel,
+        'nationalPhoneNumber': phone,
+        'websiteUri': website,
+        'regularOpeningHours': {'weekdayDescriptions': hours},
+        'photos': photo != null
+            ? [
+                {'name': photo!.name, 'googleMapsUri': photo!.mapsUrl}
+              ]
+            : [],
+      };
+
   factory Restaurant.fromJson(Map<String, dynamic> json) => Restaurant(
         id: json['id'] as String,
         name: (json['displayName']?['text'] as String?) ?? 'ร้านอาหาร',

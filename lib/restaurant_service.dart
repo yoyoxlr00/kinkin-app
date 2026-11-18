@@ -2,15 +2,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'models.dart';
 
-const demoMode = bool.fromEnvironment('DEMO_MODE', defaultValue: true);
-const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
-const mapsEnabled = bool.fromEnvironment('MAPS_ENABLED', defaultValue: false);
+const demoMode = bool.fromEnvironment('DEMO_MODE', defaultValue: false);
+const apiBaseUrl = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'http://localhost:8080',
+);
+const mapsEnabled = bool.fromEnvironment('MAPS_ENABLED', defaultValue: true);
 
 class RestaurantService {
   Future<Restaurant> details(Restaurant restaurant) async {
     if (demoMode) return restaurant;
-    if (apiBaseUrl.isEmpty)
+    if (apiBaseUrl.isEmpty) {
       throw Exception('ยังไม่ได้เชื่อมต่อบริการร้านอาหาร');
+    }
     final response = await http
         .get(Uri.parse('$apiBaseUrl/restaurant')
             .replace(queryParameters: {'id': restaurant.id}))

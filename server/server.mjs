@@ -26,6 +26,7 @@ export function createServer({ apiKey,
   return http.createServer(async (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     if (req.headers.origin === origin) {
       res.setHeader('Access-Control-Allow-Origin', origin);
       res.setHeader('Vary', 'Origin');
@@ -50,7 +51,7 @@ export function createServer({ apiKey,
     }
     if (url.pathname === '/photo') {
       const name = url.searchParams.get('name') || '';
-      if (name.length > 4096 || !/^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/.test(name)) {
+      if (name.length > 4096 || !/^places\/[A-Za-z0-9_.-]+\/photos\/[A-Za-z0-9_.-]+$/.test(name)) {
         return send(400, { error: 'Invalid photo name' });
       }
       if (!apiKey) return send(503, { error: 'Places API key is not configured' });
@@ -71,6 +72,7 @@ export function createServer({ apiKey,
         if (!photo.ok || !/^image\/(jpeg|png|webp)(;|$)/i.test(contentType)) return send(502, { error: 'Photo unavailable' });
         const bytes = Buffer.from(await photo.arrayBuffer());
         res.setHeader('Content-Type', contentType);
+        res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
         res.writeHead(200);
         return res.end(bytes);
       } catch { return send(502, { error: 'Photo unavailable' }); }
@@ -100,4 +102,3 @@ export function createServer({ apiKey,
     } catch { return send(502, { error: 'Places service unavailable' }); }
   });
 }
-
