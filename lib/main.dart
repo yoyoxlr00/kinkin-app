@@ -407,12 +407,12 @@ class _DiscoverPageState extends State<DiscoverPage> {
   late List<Restaurant> rollHistory;
   late int totalDirectionsCount;
 
-  double lat = 13.7465, lng = 100.5345, radius = 3, rating = 0;
+  double lat = dpuLocation.lat, lng = dpuLocation.lng, radius = 3, rating = 0;
   bool openOnly = false, loading = true, locating = false;
   String? error, previousId;
   String? budget;
   String query = '';
-  String locationName = 'สยาม กรุงเทพฯ';
+  String locationName = dpuLocation.name;
   int tab = 0, requestId = 0;
 
   List<Restaurant> get results => filterRestaurants(
@@ -614,7 +614,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
   Future<void> locate() async {
     if (demoMode) {
-      notice('โหมดตัวอย่างใช้ตำแหน่งสยาม กรุงเทพฯ');
+      notice('โหมดตัวอย่างไม่ใช้ GPS ร้านตัวอย่างอยู่บริเวณสยาม');
       return;
     }
     setState(() => locating = true);
@@ -629,7 +629,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
         throw Exception(
-            'ยังไม่ได้รับสิทธิ์ตำแหน่ง คุณสามารถค้นหาจากสยามหรือเปิดสิทธิ์ในการตั้งค่า');
+            'ยังไม่ได้รับสิทธิ์ตำแหน่ง คุณสามารถค้นหาจากพื้นที่ที่เลือกหรือเปิดสิทธิ์ในการตั้งค่า');
       }
       final position = await Geolocator.getCurrentPosition(
         locationSettings:
@@ -727,11 +727,15 @@ class _DiscoverPageState extends State<DiscoverPage> {
       context: context,
       backgroundColor: creamBg,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+      ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (context) => SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -751,6 +755,24 @@ class _DiscoverPageState extends State<DiscoverPage> {
               ),
               const SizedBox(height: 16),
               restaurantCard(picked),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.of(this.context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RestaurantDetailsPage(
+                          restaurant: picked,
+                          onDirections: directions,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline),
+                  label: const Text('ดูรายละเอียดร้าน'),
+                ),
+              ),
               const SizedBox(height: 12),
               Row(
                 children: [
