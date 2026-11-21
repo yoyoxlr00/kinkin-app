@@ -1,1 +1,1 @@
-{"name":"kinkin-api","private":true,"type":"module","scripts":{"start":"node --env-file=.env start.mjs","test":"node --test"},"engines":{"node":">=22"}}
+{"name":"kinkin-api","private":true,"type":"module","scripts":{"start":"node start.mjs","test":"node --test"},"engines":{"node":">=22"}}

@@ -1,1 +1,1 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"kinkin-app-5e2d4","configurations":{"web":"1:546999387433:web:7acaa3908eee9131006338"}}}}}}
+{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"kinkin-app-5e2d4","configurations":{"android":"1:546999387433:android:c97515c92ddefdb4006338","web":"1:546999387433:web:7acaa3908eee9131006338"}}},"android":{"default":{"projectId":"kinkin-app-5e2d4","appId":"1:546999387433:android:c97515c92ddefdb4006338","fileOutput":"android/app/google-services.json"}}}}}

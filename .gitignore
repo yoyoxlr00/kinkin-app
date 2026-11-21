@@ -139,9 +139,12 @@ server/diagnose-photos.mjs
 *.log
 node_modules/
 android/.gradle/
+android/.kotlin/
 android/captures/
 ios/Flutter/ephemeral/
 
 
 # Keep the application dependency lockfile
 !pubspec.lock
+# Widget Preview related
+.widget_preview/

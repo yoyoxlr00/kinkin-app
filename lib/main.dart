@@ -20,6 +20,7 @@ const darkGreen = Color(0xFF1F362C);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageService.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -137,7 +138,7 @@ class _WelcomePageState extends State<WelcomePage>
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
-                child: Padding(
+                child: SingleChildScrollView(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
                   child: FadeTransition(
@@ -146,7 +147,7 @@ class _WelcomePageState extends State<WelcomePage>
                       position: _slideAnim,
                       child: Column(
                         children: [
-                          const Spacer(flex: 2),
+                          const SizedBox(height: 24),
                           Container(
                             width: 108,
                             height: 108,
@@ -216,7 +217,7 @@ class _WelcomePageState extends State<WelcomePage>
                               color: Colors.black54,
                             ),
                           ),
-                          const Spacer(flex: 2),
+                          const SizedBox(height: 24),
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
@@ -263,7 +264,7 @@ class _WelcomePageState extends State<WelcomePage>
                               ],
                             ),
                           ),
-                          const Spacer(flex: 2),
+                          const SizedBox(height: 24),
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
@@ -291,15 +292,16 @@ class _WelcomePageState extends State<WelcomePage>
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      Flexible(child: Text(
                                         'เริ่มใช้งาน kinkin',
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 17,
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: 0.2,
                                         ),
-                                      ),
+                                      )),
                                       SizedBox(width: 10),
                                       Icon(
                                         Icons.arrow_forward_rounded,
